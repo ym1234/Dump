@@ -1,13 +1,15 @@
 import Data.List
 
 -- P1
-last' :: [a] -> a
-last' (x:[]) = x
+last' :: [a] -> Maybe a
+last' [] = Nothing
+last' (x:[]) = Just x
 last' (x:xs) = last' xs
 
 -- P2
-beforeLast :: [a] -> a
-beforeLast (x:x2:[]) = x
+beforeLast :: [a] -> Maybe a
+beforeLast [] = Nothing
+beforeLast (x:x2:[]) = Just x
 beforeLast (x:xs)  = beforeLast xs
 
 -- P3
@@ -16,22 +18,32 @@ elementAt' _ [] = Nothing
 elementAt' 0 (x:xs) = Just x
 elementAt' a (x:xs) = elementAt' (a - 1) xs
 
+-- OR
+elementAt'' :: Integer -> [a] -> Maybe a
+elementAt'' n a = fmap snd . find ((==n) . fst) $ zip [0..] a
+
 -- P4
 length' :: [a] -> Integer
 length' [] = 0
 length' (x:xs) = 1 + length' xs
+
+-- From the wiki
+-- length' = sum . map (\_ -> 1)
+-- length' = foldr ((+) . const 1) 0
 
 -- P5
 reverse' :: [a] -> [a]
 reverse' [] = []
 reverse' (x:xs) = reverse' xs ++ [x]
 
+-- From the wiki
+-- reverse' = foldl (flip (:)) []
+
 -- P6
 isPalindrome :: Eq a => [a] -> Bool
 isPalindrome x = x == reverse' x
 
 -- P7
--- Haskell is statically typed, so lists are homogeneous
 data NestedList a = Elem a | List [NestedList a] deriving (Show)
 flatten' :: NestedList a -> [a]
 flatten' (Elem a) = [a]
@@ -41,7 +53,7 @@ flatten' (List list) = foldr ((++) . flatten') [] list
 -- Lmao this is so bad
 compress :: Eq a => [a] -> [a]
 compress [] = []
-compress a = foldr (\x y -> if x == (head y) then y else x:y) [last' a] a
+compress a = foldr (\x y -> if x == (head y) then y else x:y) [last a] a
 
 -- elegant solution from the wiki
 -- compress = map head . group
@@ -80,7 +92,7 @@ encodeRLEDirect (a:as) = if f == a then (x+1, f):xs else (1, a):(x, f):xs
 repli :: Int -> [a] -> [a]
 -- repli _ [] = []
 -- repli n (a:as) = replicate n a ++ repli n as
-repli n as = foldr (\x y -> replicate n x ++ y) [] as
+repli n as = foldr ((++) . replicate n) [] as
 
 -- P16
 dropNth :: [a] -> Int -> [a]
