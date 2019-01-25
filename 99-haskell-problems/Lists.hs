@@ -1,4 +1,5 @@
 import Data.List
+-- TODO(ym): P23-25
 
 -- P1
 last' :: [a] -> Maybe a
@@ -20,7 +21,7 @@ elementAt' a (x:xs) = elementAt' (a - 1) xs
 
 -- OR
 elementAt'' :: Integer -> [a] -> Maybe a
-elementAt'' n a = fmap snd . find ((==n) . fst) $ zip [0..] a
+elementAt'' n = fmap snd . find ((==n) . fst) . zip [0..]
 
 -- P4
 length' :: [a] -> Integer
@@ -76,7 +77,7 @@ encodeRLE' = map (\(num, elem) -> if num == 1 then Single elem else Multiple num
 -- P12
 -- From the wiki
 decodeRLE :: [(Int, a)] -> [a]
-decodeRLE = concatMap (uncurry replicate)
+decodeRLE = concatMap $ uncurry replicate
 
 -- P13
 encodeRLEDirect :: Eq a => [a] -> [(Int, a)]
@@ -99,4 +100,78 @@ dropNth :: [a] -> Int -> [a]
 dropNth []  _ = []
 dropNth a n = take (n - 1) a ++ (dropNth (drop n a) n)
 
+-- P17
+splitAt' :: Int -> [a] -> ([a], [a])
+splitAt' _ []= ([], [])
+splitAt' 1 (a:as) = ([a], as)
+splitAt' n (a:as) = let (f, s) = splitAt' (n - 1) as in (a:f, s)
+
+-- OR
+splitAt'' :: Int -> [a] -> ([a], [a])
+splitAt'' n a = (take n a, drop n a)
+
+-- P18
+slice :: Int -> Int -> [a] -> [a]
+slice f l xs = take (l-f+1) (drop (f-1) xs)
+
+-- P19
+shift' :: Int -> [a] -> [a]
+shift' n a = drop smth a ++ take smth a
+  where smth = if  n < 0 then (length a) + n else n
+
+-- From the wiki
+-- (-2) `mod` 10 = 8, see mod vs rem
+shift'' xs n = take len . drop (n `mod` len) . cycle $ xs where len = length xs
+
+-- P20
+-- Meh this works sanely, 2 is the third element not the second you bastards
+-- You can also use split at, take and drop and etc etc, many ways to do this one
+removeAt' :: Int -> [a] -> (a, [a])
+-- Should probably return maybe or something
+-- removeAt' _ [] = (idk, [])
+removeAt' 0 (a:as) = (a, as)
+removeAt' n (a:as) = let (r, as) = removeAt' (n - 1) as in (r, a:as)
+
+-- OR
+removeAt'' :: Int -> [a] -> [a]
+removeAt'' n as = snd . unzip . filter ((/=n) . fst) $ zip [0..length as] as
+
+-- P21
+-- Again, pretty easy, lots of solutions
+insertAt' :: Int -> a -> [a] -> [a]
+insertAt' _ _ [] = []
+insertAt' 0 a xs = a:xs
+insertAt' n a (x:xs) = x:insertAt' (n - 1) a xs
+
+-- P22
+range' :: Int -> Int -> [Int]
+-- lol
+-- range f l = [f..l]
+range' f l = helper f (l - f)
+  where
+    helper f 0 = f:[]
+    helper f n = f:helper (f + 1) (n - 1)
+
+-- From the wiki, iterate is pretty neat
+range'' f l = take (f - l + 1) $ iterate (+1) f
+
+-- Not actually a challenge lol
+iterate'' :: (a -> a)  -> a -> [a]
+iterate'' f x = x:iterate' f (f x)
+
+-- P23
+-- K can't do this one because i don't have the random library
+selectRandom :: [a] -> a
+selectRandom = undefined
+
+-- P24
+selectRandomN :: [a] -> [a]
+selectRandomN = undefined
+
+-- P25
+randomPermutation :: [a] -> [a]
+randomPermutation = undefined
+
+-- P26
+-- Binomial coefficients
 
