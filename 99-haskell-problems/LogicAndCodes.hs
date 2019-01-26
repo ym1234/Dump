@@ -1,3 +1,4 @@
+import Control.Monad
 -- P46
 opp :: (Bool -> Bool -> Bool) -> (Bool -> Bool -> Bool)
 opp = ((not .) .)

@@ -1,5 +1,7 @@
 import Data.List
--- TODO(ym): P23-25
+import Data.Function
+import Data.Maybe
+import qualified Data.Map as M
 
 -- P1
 last' :: [a] -> Maybe a
@@ -159,19 +161,51 @@ range'' f l = take (f - l + 1) $ iterate (+1) f
 iterate'' :: (a -> a)  -> a -> [a]
 iterate'' f x = x:iterate' f (f x)
 
+-- Commented out until i fix my system lol, tested on ideone
+-- Wiki uses replicateM here, but won't that generate the same random number each time?
 -- P23
--- K can't do this one because i don't have the random library
-selectRandom :: [a] -> a
-selectRandom = undefined
-
+-- rndHelper a n = getStdGen >>= (\x -> return $ rndSelect x a n)
+-- rndSelect _ [] _ = []
+-- rndSelect _ _ 0 = []
+-- rndSelect g a n = x:rndSelect newG (prev ++ xs) (n - 1)
+--   where
+--     (index, newG) = randomR (0, (length a) - 1) g
+--     (prev, x:xs) = splitAt index a
 -- P24
-selectRandomN :: [a] -> [a]
-selectRandomN = undefined
-
+-- rndRange n r = rndHelper [0..r] n
+--
 -- P25
-randomPermutation :: [a] -> [a]
-randomPermutation = undefined
+-- rndPerm a = rndHelper a (length a)
 
 -- P26
 -- Binomial coefficients
+
+-- P27
+
+-- P28
+-- Just plain quicksort
+-- Unstable sort
+sort' :: [[a]] -> [[a]]
+sort' [] = []
+sort' (a:as) = concat  $ [sort' $ filter ((< length a) . length) as, [a], sort' $ filter ((>= length a) . length) as]
+
+-- P2
+frequency :: [[a]] -> M.Map Int Int
+frequency = foldr (M.alter (Just . maybe 1 (+1)) . length) M.empty
+
+fsortHelper = (flip fsort) <*> frequency
+
+-- Not stable unlike the wiki
+-- looks ugly af
+fsort :: M.Map Int Int -> [[a]] -> [[a]]
+fsort _ [] = []
+fsort freq (a:as) = concat  $ [fsort freq $ filter (func (<)) as , [a], fsort freq $ filter (func (>=)) as]
+  where func f x = fromMaybe False $
+          do
+            first <- M.lookup (length x) freq
+            second <- M.lookup (length a) freq
+            return $ f second first
+
+-- From the wiki, way smarter solution
+fsort' = concat . sort' . groupBy ((==) `on` length) . sort'
 
