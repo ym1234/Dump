@@ -161,8 +161,9 @@ range'' f l = take (f - l + 1) $ iterate (+1) f
 iterate'' :: (a -> a)  -> a -> [a]
 iterate'' f x = x:iterate' f (f x)
 
--- Commented out until i fix my system lol, tested on ideone
--- Wiki uses replicateM here, but won't that generate the same random number each time?
+-- -- Commented out until i fix my system lol, tested on ideone
+-- -- Wiki uses replicateM here, but won't that generate the same random number each time?
+-- -- Oh nvm, getStdGen updates the global random generates too.
 -- P23
 -- rndHelper a n = getStdGen >>= (\x -> return $ rndSelect x a n)
 -- rndSelect _ [] _ = []
@@ -171,16 +172,16 @@ iterate'' f x = x:iterate' f (f x)
 --   where
 --     (index, newG) = randomR (0, (length a) - 1) g
 --     (prev, x:xs) = splitAt index a
--- P24
+-- -- P24
 -- rndRange n r = rndHelper [0..r] n
 --
--- P25
+-- -- P25
 -- rndPerm a = rndHelper a (length a)
 
--- P26
+-- -- P26
 -- Binomial coefficients
 
--- P27
+-- -- P27
 
 -- P28
 -- Just plain quicksort
@@ -189,7 +190,6 @@ sort' :: [[a]] -> [[a]]
 sort' [] = []
 sort' (a:as) = concat  $ [sort' $ filter ((< length a) . length) as, [a], sort' $ filter ((>= length a) . length) as]
 
--- P2
 frequency :: [[a]] -> M.Map Int Int
 frequency = foldr (M.alter (Just . maybe 1 (+1)) . length) M.empty
 

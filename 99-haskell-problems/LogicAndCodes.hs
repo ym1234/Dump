@@ -1,4 +1,4 @@
-import Control.Monad
+import qualified Control.Monad as M
 -- P46
 opp :: (Bool -> Bool -> Bool) -> (Bool -> Bool -> Bool)
 opp = ((not .) .)
@@ -34,8 +34,5 @@ impl' _ _ = True
 equ' :: Bool -> Bool -> Bool
 equ' = opp xor'
 
--- TODO(ym): Find a better name for this lol
--- ALSO WOW, replicateM and sequence are pretty amazing
--- TODO(ym): Point free :^)
-combinations :: [a] -> [a]
-combinations a = replicateM (length a) a
+-- replicateM and sequence are pretty amazing
+allPermutations = (flip M.replicateM) <*> length
