@@ -1,3 +1,4 @@
+module LogicAndCodes where
 import qualified Control.Monad as M
 -- P46
 opp :: (Bool -> Bool -> Bool) -> (Bool -> Bool -> Bool)
@@ -35,4 +36,5 @@ equ' :: Bool -> Bool -> Bool
 equ' = opp xor'
 
 -- replicateM and sequence are pretty amazing
+allPermutations :: [a] -> [[a]]
 allPermutations = (flip M.replicateM) <*> length

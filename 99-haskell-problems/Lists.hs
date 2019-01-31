@@ -1,3 +1,6 @@
+module Lists where
+
+import Utils
 import Data.List
 import Data.Function
 import Data.Maybe
@@ -59,7 +62,7 @@ compress [] = []
 compress a = foldr (\x y -> if x == (head y) then y else x:y) [last a] a
 
 -- elegant solution from the wiki
--- compress = map head . group
+-- compress = fmap head . group
 
 -- P9
 pack :: Eq a => [a] -> [[a]]
@@ -69,12 +72,12 @@ pack (x:xs) = [x : takeWhile (==x) xs] ++  pack (dropWhile (==x) xs)
 
 -- P10
 encodeRLE :: Eq a => [a] -> [(Int, a)]
-encodeRLE = map (\x -> (length x, head x)) . group
+encodeRLE = fmap (\x -> (length x, head x)) . group
 
 -- P11
 data RLE a = Multiple Int a | Single a deriving (Show)
 encodeRLE' ::  Eq a => [a] -> [RLE a]
-encodeRLE' = map (\(num, elem) -> if num == 1 then Single elem else Multiple num elem) . encodeRLE
+encodeRLE' = fmap (\(num, elem) -> if num == 1 then Single elem else Multiple num elem) . encodeRLE
 
 -- P12
 -- From the wiki
@@ -157,10 +160,6 @@ range' f l = helper f (l - f)
 -- From the wiki, iterate is pretty neat
 range'' f l = take (f - l + 1) $ iterate (+1) f
 
--- Not actually a challenge lol
-iterate'' :: (a -> a)  -> a -> [a]
-iterate'' f x = x:iterate' f (f x)
-
 -- -- Commented out until i fix my system lol, tested on ideone
 -- -- Wiki uses replicateM here, but won't that generate the same random number each time?
 -- -- Oh nvm, getStdGen updates the global random generates too.
@@ -189,9 +188,6 @@ iterate'' f x = x:iterate' f (f x)
 sort' :: [[a]] -> [[a]]
 sort' [] = []
 sort' (a:as) = concat  $ [sort' $ filter ((< length a) . length) as, [a], sort' $ filter ((>= length a) . length) as]
-
-frequency :: [[a]] -> M.Map Int Int
-frequency = foldr (M.alter (Just . maybe 1 (+1)) . length) M.empty
 
 fsortHelper = (flip fsort) <*> frequency
 
