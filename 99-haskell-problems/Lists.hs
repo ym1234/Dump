@@ -30,7 +30,7 @@ elementAt'' n = fmap snd . find ((==n) . fst) . zip [0..]
 
 -- P4
 length' :: [a] -> Integer
-length' [] = 0
+length' []     = 0
 length' (x:xs) = 1 + length' xs
 
 -- From the wiki
@@ -39,7 +39,7 @@ length' (x:xs) = 1 + length' xs
 
 -- P5
 reverse' :: [a] -> [a]
-reverse' [] = []
+reverse' []     = []
 reverse' (x:xs) = reverse' xs ++ [x]
 
 -- From the wiki
@@ -47,7 +47,7 @@ reverse' (x:xs) = reverse' xs ++ [x]
 
 -- P6
 isPalindrome :: Eq a => [a] -> Bool
-isPalindrome x = x == reverse' x
+isPalindrome = (==) <*> reverse'
 
 -- P7
 data NestedList a = Elem a | List [NestedList a] deriving (Show)
@@ -86,8 +86,8 @@ decodeRLE = concatMap $ uncurry replicate
 
 -- P13
 encodeRLEDirect :: Eq a => [a] -> [(Int, a)]
-encodeRLEDirect [] = []
-encodeRLEDirect (a:[])= [(1, a)]
+encodeRLEDirect []     = []
+encodeRLEDirect (a:[]) = [(1, a)]
 encodeRLEDirect (a:as) = if f == a then (x+1, f):xs else (1, a):(x, f):xs
   where ((x, f):xs) = encodeRLEDirect as
 
@@ -103,11 +103,11 @@ repli n as = foldr ((++) . replicate n) [] as
 -- P16
 dropNth :: [a] -> Int -> [a]
 dropNth []  _ = []
-dropNth a n = take (n - 1) a ++ (dropNth (drop n a) n)
+dropNth a n   = take (n - 1) a ++ (dropNth (drop n a) n)
 
 -- P17
 splitAt' :: Int -> [a] -> ([a], [a])
-splitAt' _ []= ([], [])
+splitAt' _ []     = ([], [])
 splitAt' 1 (a:as) = ([a], as)
 splitAt' n (a:as) = let (f, s) = splitAt' (n - 1) as in (a:f, s)
 
@@ -144,8 +144,8 @@ removeAt'' n as = snd . unzip . filter ((/=n) . fst) $ zip [0..length as] as
 -- P21
 -- Again, pretty easy, lots of solutions
 insertAt' :: Int -> a -> [a] -> [a]
-insertAt' _ _ [] = []
-insertAt' 0 a xs = a:xs
+insertAt' _ _ []     = []
+insertAt' 0 a xs     = a:xs
 insertAt' n a (x:xs) = x:insertAt' (n - 1) a xs
 
 -- P22
@@ -204,4 +204,3 @@ fsort freq (a:as) = concat  $ [fsort freq $ filter (func (<)) as , [a], fsort fr
 
 -- From the wiki, way smarter solution
 fsort' = concat . sort' . groupBy ((==) `on` length) . sort'
-

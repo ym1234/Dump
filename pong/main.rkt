@@ -15,11 +15,11 @@
       (values
         (vector 30 30)
         (mutable-set)
-        (vec2d 10 10)
+        (vec2d 5 5)
         (vec2d 0 0)))
 
     (super-new [min-height 500] [min-width 500])
-    (inherit flush get-dc set-canvas-background get-height get-width refresh-now)
+    (inherit flush get-dc set-canvas-background get-height get-width refresh-now refresh)
 
     (send* (get-dc)
            (set-brush "white" 'solid)
@@ -34,23 +34,23 @@
     (define/public (update)
       (for ([key (in-set keys)])
         (match key
-          ['up   (move-player 0 -15)]
-          ['down (move-player 0  15)]
-          [#\k   (move-player 1 -15)]
-          [#\j   (move-player 1  15)]))
+          ['up   (move-player 0 -10)]
+          ['down (move-player 0  10)]
+          [#\k   (move-player 1 -10)]
+          [#\j   (move-player 1  10)]
+          [else  void]))
+
       (set-vec2d-x! circle (+ (vec2d-x circle) (vec2d-x circle-dir)))
       (set-vec2d-y! circle (+ (vec2d-y circle) (vec2d-y circle-dir)))
       (check-ball)
-      (refresh-now)
-      (flush))
+      (refresh-now))
 
-    ;; Wew this looks awful
+    ;; i mean it works, but still looks ugly af
     (define/private (check-ball)
-      (cond
-        [(<= (vec2d-x circle) 0) (set-vec2d-x! circle-dir (- (vec2d-x circle-dir))) (set-vec2d-x! circle 0)]
-        [(>= (vec2d-x circle) (- (get-width) 20)) (set-vec2d-x! circle-dir (- (vec2d-x circle-dir))) (set-vec2d-x! circle (- (get-width) 20))]
-        [(<= (vec2d-y circle) 0) (set-vec2d-y! circle-dir (- (vec2d-y circle-dir)))(set-vec2d-y! circle 0)]
-        [(>= (vec2d-y circle) (- (get-height) 20)) (set-vec2d-y! circle-dir (- (vec2d-y circle-dir))) (set-vec2d-y! circle (- (get-height) 20))]))
+      (for ([i `((,<=  0 . 0) (,>=  ,(- (get-width) 20) . ,(- (get-height) 20)))])
+        (cond
+          [((car i) (vec2d-x circle) (cadr i)) (set-vec2d-x! circle-dir (- (vec2d-x circle-dir))) (set-vec2d-x! circle (cadr i))]
+          [((car i) (vec2d-y circle) (cddr i)) (set-vec2d-y! circle-dir (- (vec2d-y circle-dir))) (set-vec2d-y! circle (cddr i))])))
 
     (define/override (on-size width height)
       (move-player 0 0)
@@ -59,16 +59,16 @@
     (define/override (on-char event)
       (define key-code (send event get-key-code))
       (match key-code
-        [(or 'up 'down #\k #\j)  (set-add! keys key-code)]
         ['release (set-remove! keys (send event get-key-release-code))]
         [(or 'escape #\q) (exit)]
-        [else void]))
+        [else (set-add! keys key-code)]))
 
     (define/override (on-paint)
       (send* (get-dc)
              (draw-ellipse (vec2d-x circle) (vec2d-y circle) 20 20)
              (draw-rectangle 30 (vector-ref players 0) 10 100)
-             (draw-rectangle (- (get-width) 40) (vector-ref players 1) 10 100)))))
+             (draw-rectangle (- (get-width) 40) (vector-ref players 1) 10 100)
+			 (draw-rectangle (/ (get-width) 2) 0 10 (get-height))))))
 
 (define pong (new pong% [parent frame]))
 (send frame show #t)

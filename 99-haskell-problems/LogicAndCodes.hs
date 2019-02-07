@@ -23,7 +23,7 @@ nor' :: Bool -> Bool -> Bool
 nor' = opp or'
 
 xor' :: Bool -> Bool -> Bool
-xor' a b = and' (or' a b) (nand' a b)
+xor' a  b = and' (or' a b) (nand' a b)
 -- Using lambda bot: (amazing lol)
 -- ap (ap . (and' .) . or') nand'
 
@@ -32,9 +32,36 @@ impl' :: Bool -> Bool -> Bool
 impl' True False = False
 impl' _ _ = True
 
-equ' :: Bool -> Bool -> Bool
+equ'  :: Bool -> Bool -> Bool
 equ' = opp xor'
 
 -- replicateM and sequence are pretty amazing
 allPermutations :: [a] -> [[a]]
 allPermutations = (flip M.replicateM) <*> length
+
+-- Copied from the wiki lol
+infixl 4 `or'`
+infixl 4 `nor'`
+infixl 5 `xor'`
+infixl 6 `and'`
+infixl 6 `nand'`
+infixl 3 `equ'` -- was 7, changing it to 3 got me the same results as in the original question :(
+
+-- P46-48
+table :: ([Bool] -> Bool) -> Int -> [[Bool]]
+table a n = do
+  f <- M.replicateM n [True, False]
+  return $ f ++ [a f]
+
+-- P49
+-- https://en.wikipedia.org/wiki/Gray_code
+-- Not doing memoization lol
+greyCode :: Integer -> [String]
+greyCode n = reverse $ helper n ["1", "0"]
+  where helper 1 x = x
+        helper n x = helper (n - 1) $ (('1':) <$> (reverse x)) ++ (('0':) <$> x)
+
+-- better solution from the wiki
+grayCode' :: Int -> [String]
+grayCode' 0 = [""]
+grayCode' n = let xs = grayCode' (n-1) in map ('0':) xs ++ map ('1':) (reverse xs)
