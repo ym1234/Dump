@@ -189,7 +189,7 @@ sort' :: [[a]] -> [[a]]
 sort' [] = []
 sort' (a:as) = concat  $ [sort' $ filter ((< length a) . length) as, [a], sort' $ filter ((>= length a) . length) as]
 
-fsortHelper = (flip fsort) <*> frequency
+fsortHelper = frequency >>= fsort
 
 -- Not stable unlike the wiki
 -- looks ugly af

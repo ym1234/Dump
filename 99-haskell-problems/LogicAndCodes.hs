@@ -37,7 +37,7 @@ equ' = opp xor'
 
 -- replicateM and sequence are pretty amazing
 allPermutations :: [a] -> [[a]]
-allPermutations = (flip M.replicateM) <*> length
+allPermutations = length >>= M.replicateM
 
 -- Copied from the wiki lol
 infixl 4 `or'`

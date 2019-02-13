@@ -7,6 +7,10 @@
 
 (struct vec2d (x y) #:transparent #:mutable)
 
+(define (vec+! x y)
+  (set-vec2d-x! x (+ (vec2d-x x) (vec2d-x y)))
+  (set-vec2d-y! x (+ (vec2d-y x) (vec2d-y y))))
+
 (define frame (new frame% [label "Pong"] [width 500] [height 500] ))
 (define pong%
   (class canvas%
@@ -40,17 +44,17 @@
           [#\j   (move-player 1  10)]
           [else  void]))
 
-      (set-vec2d-x! circle (+ (vec2d-x circle) (vec2d-x circle-dir)))
-      (set-vec2d-y! circle (+ (vec2d-y circle) (vec2d-y circle-dir)))
+      (vec+ circle circle-dir)
       (check-ball)
       (refresh-now))
 
     ;; i mean it works, but still looks ugly af
     (define/private (check-ball)
-      (for ([i `((,<=  0 . 0) (,>=  ,(- (get-width) 20) . ,(- (get-height) 20)))])
+      (for ([i `((,<=  0 0) (,>=  ,(- (get-width) 20) ,(- (get-height) 20)))])
+        (match-define (list op x y) i)
         (cond
-          [((car i) (vec2d-x circle) (cadr i)) (set-vec2d-x! circle-dir (- (vec2d-x circle-dir))) (set-vec2d-x! circle (cadr i))]
-          [((car i) (vec2d-y circle) (cddr i)) (set-vec2d-y! circle-dir (- (vec2d-y circle-dir))) (set-vec2d-y! circle (cddr i))])))
+          [(op (vec2d-x circle) x) (set-vec2d-x! circle-dir (- (vec2d-x circle-dir))) (set-vec2d-x! circle x)]
+          [(op (vec2d-y circle) y) (set-vec2d-y! circle-dir (- (vec2d-y circle-dir))) (set-vec2d-y! circle y)])))
 
     (define/override (on-size width height)
       (move-player 0 0)
@@ -68,7 +72,7 @@
              (draw-ellipse (vec2d-x circle) (vec2d-y circle) 20 20)
              (draw-rectangle 30 (vector-ref players 0) 10 100)
              (draw-rectangle (- (get-width) 40) (vector-ref players 1) 10 100)
-			 (draw-rectangle (/ (get-width) 2) 0 10 (get-height))))))
+             (draw-rectangle (/ (get-width) 2) 0 10 (get-height))))))
 
 (define pong (new pong% [parent frame]))
 (send frame show #t)
