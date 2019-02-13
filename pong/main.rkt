@@ -44,7 +44,7 @@
           [#\j   (move-player 1  10)]
           [else  void]))
 
-      (vec+ circle circle-dir)
+      (vec+! circle circle-dir)
       (check-ball)
       (refresh-now))
 
