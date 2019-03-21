@@ -78,10 +78,8 @@
 (send frame show #t)
 
 ;; Not sure if this is the right way // Pretty sure this isn't the right way
-(thread
-  (λ ()
-    (define (game-loop)
-      (send pong update)
-      (sleep 0.016)
-      (game-loop))
-    (game-loop)))
+(define (game-loop)
+  (send pong update)
+  (sleep/yield 0.016)
+  (game-loop))
+(game-loop)

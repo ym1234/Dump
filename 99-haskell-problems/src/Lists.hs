@@ -173,7 +173,7 @@ rndRange n r = rndSelect [0..r] n
 
 -- P25
 rndPerm :: [a] -> IO [a]
-rndPerm a = rndSelect a (length a)
+rndPerm = rndSelect <*> length
 
 -- P26
 -- Binomial coefficients
