@@ -93,6 +93,7 @@ transformable2 = TransformWith (uncurry (++)) ("Hello,", " world!")
 -- the only thing we can do to it?
 -- input is the existential type, apply the first param to it
 
+
 -- | b. Could we write an 'Eq' instance for 'TransformableTo'? What would we be
 -- able to check?
 instance Eq a => Eq (TransformableTo a) where
